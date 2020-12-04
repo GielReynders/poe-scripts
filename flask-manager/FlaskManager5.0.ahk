@@ -44,3 +44,9 @@ Else
     Send, {text}f
     Return
 }
+
+
+RandomDelay()
+{
+   Sleep, Random (20,50)
+}
