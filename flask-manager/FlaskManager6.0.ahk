@@ -1,4 +1,4 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
@@ -11,33 +11,38 @@ F4:: Suspend On         ;To suspend the fuction of the script. (in case you need
 
 3::                     ;Hotkey for 3
 If (WinActive("Path of Exile")) {
-    If (smartMovementflasks = true) {
-        PixelGetColor, color, 569, 1398
-        If (color=0x0F0F0F) { ; flask in third slot is empty
-            Send, 2           ; so we activate the flask in the second slot
-            Return
+    If (FlasksNotAlreadyRunning()) {
+        If (smartMovementflasks = true) {
+            PixelGetColor, color, 569, 1398
+            If (color=0x0F0F0F) { ; flask in third slot is empty
+                Send, 2           ; so we activate the flask in the second slot
+                Return
+            }
+            Else {
+                Send, b
+                Return
+            }
         }
         Else {
-            Send, b
+            number3ButtonsToPress := ["b"]
+            Loop % number3ButtonsToPress.Length()
+            {
+                button := number3ButtonsToPress[A_Index]
+                Send, {%button%}
+                RandomDelay()
+            }
             Return
         }
     }
     Else {
-        number3ButtonsToPress := ["b"]
-        Loop % number3ButtonsToPress.Length()
-        {
-            button := number3ButtonsToPress[A_Index]
-            Send, {%button%}
-            RandomDelay()
-        }
         Return
     }
 }
 Else {
-            Send, {text}3                   ;{text} so that the 3 is interpreted as literal text, otherwise the scrips loops infinitely
-            Return
-        }
-
+    Send, {text}3                   ;{text} so that the 3 is interpreted as literal text, otherwise the scrips loops infinitely
+    Return
+}
+        
 F::                     ;Hotkey for f
 If WinActive("Path of Exile")
 {
@@ -131,4 +136,16 @@ RandomDelay()
 {
    Sleep, Random (20,50) 
    Return
+}
+
+FlasksNotAlreadyRunning() {
+    PixelGetColor, color1, 488, 1428
+    PixelGetColor, color2, 548, 1429
+    flaskRunningColor := 0x99D7F9
+    If (color1 = flaskRunningColor or color2 = flaskRunningColor) { ;means the flasks are active
+        Return False
+    }
+    Else {
+        Return True
+    }
 }
